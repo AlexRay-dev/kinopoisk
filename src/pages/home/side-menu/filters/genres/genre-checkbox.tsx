@@ -1,9 +1,10 @@
 import React, {FC} from 'react';
-import {Checkbox, FormControlLabel} from "@mui/material";
-import {useAppDispatch, useAppSelector} from "../../../../../hooks/redux";
-import {setGenreList} from "../../../../../store/reducers/moviesSlice";
+import {FormControlLabel} from "@mui/material";
+import {selectMovieList, setGenreList} from "../../../../../core/store/reducers/moviesSlice";
 import {toggleIdInArray} from "../../utils/toggleIdInArray";
-import {setCurrentPage} from "../../../../../store/reducers/paginationSlice";
+import {setCurrentPage} from "../../../../../core/store/reducers/paginationSlice";
+import {useAppDispatch, useAppSelector} from "../../../../../core/hooks/redux";
+import {StyledCheckbox} from "./styled";
 
 interface IGenreCheckboxProps {
   id: number,
@@ -12,18 +13,18 @@ interface IGenreCheckboxProps {
 
 const GenreCheckbox: FC<IGenreCheckboxProps> = ({id, name}) => {
   const dispatch = useAppDispatch();
-  const {genreList} = useAppSelector(state => state.moviesReducer);
-  const isChecked = genreList.includes(id)
+  const {genreList} = useAppSelector(selectMovieList);
+  const isChecked = genreList.includes(id);
 
-  function changeHandler(id: number) {
+  const changeHandler = (id: number) => {
     dispatch(setGenreList(toggleIdInArray(genreList, id)));
-    dispatch(setCurrentPage(1))
-  }
+    dispatch(setCurrentPage(1));
+  };
 
   return (
-    <FormControlLabel control={
-      <Checkbox checked={isChecked} onChange={() => changeHandler(id)} size={"small"} sx={{pt: "1px", pb: "1px"}}/>
-    } label={name}/>
+    <FormControlLabel label={name} control={
+      <StyledCheckbox checked={isChecked} onChange={() => changeHandler(id)} size={"small"}/>
+    }/>
   );
 };
 

@@ -1,30 +1,28 @@
-import React from "react";
-import {Box, Typography} from "@mui/material";
+import React, {FC} from "react";
 import GenreList from "./filters/genres/genre-list";
-import CustomPagination from "./pagination";
-import PopularSelect from "./filters/popular-select";
-import UserFavoriteSelect from "./filters/user-favorite-select";
-import YearSelect from "./filters/year-select";
-import {useAppSelector} from "../../../hooks/redux";
-import ResetButton from "./filters/reset-button";
+import CustomPagination from "./pagination/pagination";
+import PopularSelect from "./filters/selects/popular-select";
+import UserFavoriteSelect from "./filters/selects/user-favorite-select";
+import YearSelect from "./filters/selects/year-select";
+import ResetButton from "./filters/reset-button/reset-button";
+import {useAppSelector} from "../../../core/hooks/redux";
+import {selectAuth} from "../../../core/store/reducers/authSlice";
+import {SideMenuInner, SideMenuTitle} from "./styled";
 
-
-function SideMenu() {
-  const {isAuth} = useAppSelector(state => state.authReducer);
+const SideMenu: FC = () => {
+  const {isAuth} = useAppSelector(selectAuth);
 
   return (
-    <Box component={"aside"} p={"1rem"} boxShadow='0 10px 40px rgb(0 0 0 / 30%)' borderRadius={"5px"}
-         maxWidth='15.625rem' height={"100%"}>
-      <Typography variant={"h4"} component={"span"} fontWeight={"500"}>Фильтры:</Typography>
+    <SideMenuInner component={"aside"}>
+      <SideMenuTitle variant={"h4"}>Фильтры:</SideMenuTitle>
       <ResetButton/>
       <PopularSelect/>
       <YearSelect/>
       {isAuth && <UserFavoriteSelect/>}
       <GenreList/>
       <CustomPagination/>
-    </Box>
+    </SideMenuInner>
   );
 }
-
 
 export default SideMenu;

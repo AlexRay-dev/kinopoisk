@@ -1,18 +1,16 @@
 import React, {FC} from 'react';
-import {Box, Container} from "@mui/material";
+import {Container} from "@mui/material";
 import SideMenu from "./side-menu/side-menu";
 import MovieList from "./movie-list/movie-list";
+import {HomeInner} from "./styled";
 
 const Home: FC = () => {
   return (
     <Container>
-      <Box sx={{
-        m: "1.5rem 0",
-        display: "flex",
-      }}>
+      <HomeInner>
         <SideMenu/>
         <MovieList/>
-      </Box>
+      </HomeInner>
     </Container>
   );
 };

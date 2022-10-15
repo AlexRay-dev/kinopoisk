@@ -1,49 +1,37 @@
-import React, {FC, useState} from 'react';
+import React, {FC, SyntheticEvent, useState} from 'react';
 import {BookmarkBorder, BookmarkOutlined} from "@mui/icons-material";
-import {Button, IconButton, Snackbar} from "@mui/material";
-import {ICardButtonProps} from "./movie-card";
-import {useAppDispatch, useAppSelector} from "../../../../hooks/redux";
-import {setUserWatchLaterList} from "../../../../store/reducers/moviesSlice";
-import {setAuthModalState} from "../../../../store/reducers/modalSlice";
+import {Button, IconButton, Snackbar, SnackbarCloseReason} from "@mui/material";
+import {selectMovieList, setUserWatchLaterList} from "../../../../core/store/reducers/moviesSlice";
+import {setAuthModalState} from "../../../../core/store/reducers/modalSlice";
+import {useAppDispatch, useAppSelector} from "../../../../core/hooks/redux";
+import {ICardButtonProps} from "./interface";
+import {selectAuth} from "../../../../core/store/reducers/authSlice";
 
 const WatchLaterButton: FC<ICardButtonProps> = ({id}) => {
-  const {isAuth} = useAppSelector(state => state.authReducer)
-  const watchLaterList = useAppSelector(state => state.moviesReducer.sortByUserFavorite.watchLater)
+  const [open, setOpen] = useState<boolean>(false);
+  const {isAuth} = useAppSelector(selectAuth);
+  const {sortByUserFavorite} = useAppSelector(selectMovieList);
   const dispatch = useAppDispatch();
 
-  const [open, setOpen] = useState(false);
-
-  // @ts-ignore
-  const handleClose = (event, reason) => {
-    if (reason === 'clickaway') {
-      return;
-    }
-
-    setOpen(false);
+  const handleClose = (event: Event | SyntheticEvent<any, Event>, reason: SnackbarCloseReason): void => {
+    if (reason !== 'clickaway') setOpen(false);
   };
 
-  function onClickWatchLater() {
+  const onClickWatchLater = () => {
     if (isAuth) {
       setOpen(true);
-      dispatch(setUserWatchLaterList(id))
+      dispatch(setUserWatchLaterList(id));
       return;
     }
-    dispatch(setAuthModalState(true))
-  }
+    dispatch(setAuthModalState(true));
+  };
 
-  const action = (
-    <Button color="primary" size="small" variant={"contained"} onClick={onClickWatchLater}>
-      Отменить
-    </Button>
-  );
+  const snackbarAction = <Button color="primary" size="small" variant="contained" onClick={onClickWatchLater}>Отменить</Button>
 
   return (
     <>
-      <IconButton
-        onClick={onClickWatchLater}
-        size="small"
-      >
-        {watchLaterList.includes(id) ? <BookmarkOutlined/> : <BookmarkBorder/>}
+      <IconButton onClick={onClickWatchLater} size="small">
+        {sortByUserFavorite.watchLater.includes(id) ? <BookmarkOutlined/> : <BookmarkBorder/>}
       </IconButton>
 
       <Snackbar
@@ -51,7 +39,7 @@ const WatchLaterButton: FC<ICardButtonProps> = ({id}) => {
         autoHideDuration={1500}
         onClose={handleClose}
         message='Фильм добавлен в список "смотреть позже"'
-        action={action}
+        action={snackbarAction}
       />
     </>
   );

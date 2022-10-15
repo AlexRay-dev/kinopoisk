@@ -1,41 +1,36 @@
 import React, {FC} from 'react';
-import {Box, Button, Typography} from "@mui/material";
-import {genreListData} from "../../shared/data/genreListData";
-import {useAppDispatch, useAppSelector} from "../../hooks/redux";
-import {setCurrentQuestion, setFilteredSearchList} from "../../store/reducers/searchSlice";
-import {filterByGenre} from "../home/movie-list/utils/sorting";
-import {movieListData} from "../../shared/data/movieListData";
+import {Stack} from "@mui/material";
+import {selectSearch, setCurrentQuestion, setFilteredSearchList} from "../../core/store/reducers/searchSlice";
+import {filterByGenre} from "../../core/utils/sorting";
+import {useAppDispatch, useAppSelector} from "../../core/hooks/redux";
+import {movieListData} from "../../core/data/movieListData";
+import {genreListData} from "../../core/data/genreListData";
+import {SearchButton, SearchInner, SearchTitle} from "./styled";
 
 const GenresSearch: FC = () => {
   const dispatch = useAppDispatch();
-  const {currentQuestion} = useAppSelector(state => state.searchReducer)
+  const {currentQuestion} = useAppSelector(selectSearch);
 
-  function onClickButton(id: number) {
-    dispatch(setCurrentQuestion(currentQuestion + 1))
-    dispatch(setFilteredSearchList(filterByGenre(movieListData, [id])))
-  }
+  const onClickButton = (id: number) => {
+    dispatch(setCurrentQuestion(currentQuestion + 1));
+    dispatch(setFilteredSearchList(filterByGenre(movieListData, [id])));
+  };
 
   return (
-    <Box sx={{maxWidth: "700px",width: "100%", m: "20px auto 0"}}>
-      <Typography variant={"h2"} component={"h2"} sx={{
-        textAlign: "center",
-        mb: "20px",
-      }}>Выберите жанр</Typography>
+    <SearchInner>
+      <SearchTitle variant="h2">Выберите жанр</SearchTitle>
 
-      <Box sx={{ display: 'flex', justifyContent: 'center', flexWrap: 'wrap' }}>
+      <Stack justifyContent='center' flexWrap='wrap' direction="row">
         {genreListData.map((item) => (
-          <Button
+          <SearchButton
             key={item.id}
             onClick={() => onClickButton(item.id)}
-            sx={{ flex: '0 200px', mb: '20px', mr: '5px' }}
-            variant="outlined"
-          >
+            variant="outlined">
             {item.name}
-          </Button>
+          </SearchButton>
         ))}
-      </Box>
-
-    </Box>
+      </Stack>
+    </SearchInner>
   );
 };
 

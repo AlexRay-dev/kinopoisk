@@ -1,36 +1,22 @@
 import React, {FC} from 'react';
-import {Box, Modal} from "@mui/material";
-import {useAppDispatch, useAppSelector} from "../../../hooks/redux";
-import {setAuthModalState} from "../../../store/reducers/modalSlice";
+import {Modal} from "@mui/material";
+import {setAuthModalState} from "../../../core/store/reducers/modalSlice";
 import LoginForm from "./login-form";
-
-const style = {
-  position: 'absolute',
-  top: '50%',
-  left: '50%',
-  transform: 'translate(-50%, -50%)',
-  width: 400,
-  bgcolor: 'background.paper',
-  border: '2px solid #000',
-  boxShadow: 24,
-  p: 4,
-};
+import {useAppDispatch, useAppSelector} from "../../../core/hooks/redux";
+import {ModalInner} from "./styled";
 
 const LoginModal: FC = () => {
   const {isAuthModalOpen} = useAppSelector(state => state.modalReducer);
   const dispatch = useAppDispatch();
 
-  const handleClose = () => dispatch(setAuthModalState(false));
-
   return (
     <>
-      <Modal open={isAuthModalOpen} onClose={handleClose}>
-        <Box sx={style}>
+      <Modal open={isAuthModalOpen} onClose={() => dispatch(setAuthModalState(false))}>
+        <ModalInner>
           <LoginForm/>
-        </Box>
+        </ModalInner>
       </Modal>
     </>
-
   );
 };
 

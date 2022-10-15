@@ -1,47 +1,36 @@
-import React, {FC, useState} from 'react';
+import React, {FC, SyntheticEvent, useState} from 'react';
 import {StarOutline, StarOutlined} from "@mui/icons-material";
-import {Button, IconButton, Snackbar} from '@mui/material';
-import {ICardButtonProps} from "./movie-card";
-import {useAppDispatch, useAppSelector} from "../../../../hooks/redux";
-import {setUserFavoriteList} from "../../../../store/reducers/moviesSlice";
-import {setAuthModalState} from "../../../../store/reducers/modalSlice";
+import {Button, IconButton, Snackbar, SnackbarCloseReason} from '@mui/material';
+import {setUserFavoriteList} from "../../../../core/store/reducers/moviesSlice";
+import {setAuthModalState} from "../../../../core/store/reducers/modalSlice";
+import {useAppDispatch, useAppSelector} from "../../../../core/hooks/redux";
+import {ICardButtonProps} from "./interface";
+import {selectAuth} from "../../../../core/store/reducers/authSlice";
 
 const FavoriteButton: FC<ICardButtonProps> = ({id}) => {
-  const {isAuth} = useAppSelector(state => state.authReducer)
-  const favoriteList = useAppSelector(state => state.moviesReducer.sortByUserFavorite.favorites)
+  const {isAuth} = useAppSelector(selectAuth);
+  const favoriteList = useAppSelector(state => state.moviesReducer.sortByUserFavorite.favorites);
   const dispatch = useAppDispatch();
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState<boolean>(false);
 
-  // @ts-ignore
-  const handleClose = (event, reason) => {
-    if (reason === 'clickaway') {
-      return;
-    }
-
-    setOpen(false);
+  const handleClose = (event: Event | SyntheticEvent<any, Event>, reason: SnackbarCloseReason): void => {
+    if (reason !== 'clickaway') setOpen(false);
   };
 
-  function onClickFavorite() {
+  const onClickFavorite = () => {
     if (isAuth) {
       setOpen(true);
-      dispatch(setUserFavoriteList(id))
-      return
+      dispatch(setUserFavoriteList(id));
+      return;
     }
-    dispatch(setAuthModalState(true))
-  }
+    dispatch(setAuthModalState(true));
+  };
 
-  const action = (
-    <Button color="primary" size="small" variant={"contained"} onClick={onClickFavorite}>
-      Отменить
-    </Button>
-  );
+  const snackbarAction = <Button color="primary" size="small" variant="contained" onClick={onClickFavorite}>Отменить</Button>;
 
   return (
     <>
-      <IconButton
-        onClick={onClickFavorite}
-        size="small"
-      >
+      <IconButton onClick={onClickFavorite} size="small">
         {isAuth && favoriteList.includes(id) ? <StarOutlined/> : <StarOutline/>}
       </IconButton>
 
@@ -50,10 +39,8 @@ const FavoriteButton: FC<ICardButtonProps> = ({id}) => {
         autoHideDuration={1500}
         onClose={handleClose}
         message='Фильм успешно добавлен в избранное'
-        action={action}
-        sx={{
-          color: "secondary"
-        }}
+        action={snackbarAction}
+        color="secondary"
       />
     </>
   );

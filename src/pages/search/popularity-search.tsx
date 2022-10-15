@@ -1,41 +1,36 @@
 import React, {FC} from 'react';
-import {useAppDispatch, useAppSelector} from "../../hooks/redux";
-import {setCurrentQuestion, setFilteredSearchList} from "../../store/reducers/searchSlice";
-import {filterBySearchPopularity} from "../home/movie-list/utils/sorting";
-import {Box, Button, Typography} from "@mui/material";
+import {selectSearch, setCurrentQuestion, setFilteredSearchList} from "../../core/store/reducers/searchSlice";
+import {filterBySearchPopularity} from "../../core/utils/sorting";
+import {Stack} from "@mui/material";
+import {useAppDispatch, useAppSelector} from "../../core/hooks/redux";
+import {SearchButton, SearchInner, SearchTitle} from './styled';
 
 const PopularitySearch: FC = () => {
   const dispatch = useAppDispatch();
-  const {currentQuestion, movieList} = useAppSelector(state => state.searchReducer)
+  const {currentQuestion, movieList} = useAppSelector(selectSearch);
 
-  function onClickButton(id: number, type: string) {
-    dispatch(setCurrentQuestion(currentQuestion + 1))
-    dispatch(setFilteredSearchList(filterBySearchPopularity(movieList, type)))
-  }
+  const onClickButton = (id: number, type: string) => {
+    dispatch(setCurrentQuestion(currentQuestion + 1));
+    dispatch(setFilteredSearchList(filterBySearchPopularity(movieList, type)));
+  };
 
-  const movieRatingType = [{name: "Популярный", id: 1}, {name: "Неизвестный", id: 2}]
+  const movieRatingType = [{name: "Популярный", id: 1}, {name: "Неизвестный", id: 2}];
 
   return (
-    <Box sx={{maxWidth: "700px", width: "100%", m: "20px auto 0"}}>
-      <Typography variant={"h2"} component={"h2"} sx={{
-        textAlign: "center",
-        mb: "20px",
-      }}>Популярный или неизвестный?</Typography>
+    <SearchInner>
+      <SearchTitle variant="h2">Популярный или неизвестный?</SearchTitle>
 
-      <Box sx={{display: 'flex', justifyContent: 'center', flexWrap: 'wrap'}}>
+      <Stack justifyContent='center' flexWrap='wrap' direction="row">
         {movieRatingType.map((item) => (
-          <Button
+          <SearchButton
             key={item.id}
             onClick={() => onClickButton(item.id, item.name)}
-            sx={{flex: '0 200px', mb: '20px', mr: '5px'}}
-            variant="outlined"
-          >
+            variant="outlined">
             {item.name}
-          </Button>
+          </SearchButton>
         ))}
-      </Box>
-
-    </Box>
+      </Stack>
+    </SearchInner>
   )
 };
 

@@ -1,7 +1,7 @@
 import {Box, FormGroup} from '@mui/material';
 import React, {FC} from 'react';
-import {genreListData} from "../../../../../shared/data/genreListData";
 import GenreCheckbox from "./genre-checkbox";
+import {genreListData} from "../../../../../core/data/genreListData";
 
 const GenreList: FC = () => {
   return (
